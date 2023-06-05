@@ -6,9 +6,8 @@ GraveManGame is a web-based 2D platform game where your objective is to reach th
 
 To run GraveManGame on your local machine, follow these steps:
 
-Clone this repository or download the ZIP file.
-Open the index.html file in a web browser.
-What I Have Learned
+1. Clone this repository or download the ZIP file.
+2. Open the index.html file in a web browser.
 
 # Acquired valuable skills and knowledge:
 
