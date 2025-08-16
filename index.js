@@ -10,7 +10,7 @@ const gravity = .55;
 class Player {
 	constructor() {
 		//set player speed
-		this.speed = 12 // default is 9
+		this.speed = 9 // default is 9
 	this.position = {
 		x: 100,
 		y: 100
