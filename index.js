@@ -7,72 +7,91 @@ canvas.height = 600
 const gravity = .55;
 
 //player blueprint
+//player blueprint
 class Player {
 	constructor() {
 		//set player speed
 		this.speed = 9 // default is 9
-	this.position = {
-		x: 100,
-		y: 100
+		this.position = {
+			x: 100,
+			y: 100
+		}
+		this.velocity = {
+			x: 0,
+			y: 0
+		}
+
+		this.width = 66
+		this.height = 150
+
+		// Add ground detection
+		this.isOnGround = false
+
+		this.image = createImage('img/spriteStandRight.png')
+		this.frames = 0
+		//stand is 18 frames, run is 11 frames
+
+		this.sprites = {
+			stand: {
+				right: createImage('img/spriteStandRight.png'),
+				left: createImage('img/spriteStandLeft.png'),
+				cropWidth: 177,	
+				width: 66
+			},
+			run: {
+				right: createImage('img/spriteRunRight.png'),
+				left: createImage('img/spriteRunLeft.png'),
+				cropWidth: 341,
+				width: 127.875
+			}
+		}
+
+		this.currentSprite = this.sprites.stand.right
+		this.currentCropWidth = 177
 	}
-	this.velocity = {
-		x: 0,
-		y: 0
+
+	draw() {
+		c.drawImage(
+			this.currentSprite,
+			this.currentCropWidth * this.frames, //x coordinate to pick frame
+			0,
+			this.currentCropWidth, //width selection for frame 670
+			400, //height selection for frame
+			this.position.x,
+			this.position.y, 
+			this.width,
+			this.height)
 	}
 
-	this.width = 66
-	this.height = 150
+	update() { 
+		//frames
+		this.frames++
+		if (this.frames >= 28) this.frames = 0
+		this.draw()
+		this.position.x += this.velocity.x
+		this.position.y += this.velocity.y
+		
+		//creation of player velocity
+		if (this.position.y + this.height +
+			this.velocity.y <= canvas.height) {
+			this.velocity.y += gravity //jump
+		}
 
-	this.image = createImage('img/spriteStandRight.png')
-	this.frames = 0
-	//stand is 18 frames, run is 11 frames
-
-	this.sprites = {
-		stand: {
-			right: createImage('img/spriteStandRight.png'),
-			left: createImage('img/spriteStandLeft.png'),
-			cropWidth: 177,	
-			width: 66
-		},
-		run: {
-			right: createImage('img/spriteRunRight.png'),
-			left: createImage('img/spriteRunLeft.png'),
-			cropWidth: 341,
-			width: 127.875
+		// Check if player is on ground (canvas floor)
+		if (this.position.y + this.height >= canvas.height) {
+			this.isOnGround = true
+		} else {
+			this.isOnGround = false
 		}
 	}
 
-	this.currentSprite = this.sprites.stand.right
-	this.currentCropWidth = 177
- }
-
- draw() {
-	c.drawImage(
-		this.currentSprite,
-		this.currentCropWidth * this.frames, //x coordinate to pick frame
-		0,
-		this.currentCropWidth, //width selection for frame 670
-		400, //height selection for frame
-		this.position.x,
-		this.position.y, 
-		this.width,
-		this.height)
- }
-
- 
- update() { 
-	//frames
-	this.frames++
-	if (this.frames >= 28) this.frames = 0
-	this.draw()
-	this.position.x += this.velocity.x
-	this.position.y += this.velocity.y
-	
-	//creation of player velocity
-	if (this.position.y + this.height +
-		this.velocity.y <= canvas.height)
-		this.velocity.y += gravity //jump
-    }
+	// Method to handle jumping
+	jump() {
+		if (this.isOnGround) {
+			this.velocity.y = -15
+			this.isOnGround = false
+		}
+	}
 }
 
 //bat blueprint
@@ -518,6 +537,7 @@ function animate() {
 		platform.position.x +
 		platform.width) {
 			player.velocity.y = 0
+			player.isOnGround = true
 		}
 	}) 
     //tall platform detection
@@ -534,6 +554,7 @@ function animate() {
 		platformTall.position.x +
 		platformTall.width) {
 			player.velocity.y = 0
+			player.isOnGround = true
 		}
 	})	
 
@@ -664,8 +685,9 @@ addEventListener('keydown', ({keyCode}) => {
 		break
 
 		case 87: 
-		console.log('up')
-		player.velocity.y -= 15
+	console.log('up')
+	player.jump()  
+	break
 	
 }
 	console.log(keys.right.pressed)
