@@ -614,32 +614,48 @@ function animate() {
 			})
 
 	//sprite switching
-		if (keys.right.pressed && 
-			lastKey === 'right' && 
-			player.currentSprite !== player.sprites.run.right) {
-				player.frames = 1
-			player.currentSprite = player.sprites.run.right
-			player.currentCropWidth = player.sprites.run.cropWidth
-			player.width = player.sprites.run.width
-		} else if (keys.left.pressed && 
-			lastKey === 'left' && player.currentSprite 
-		!= player.sprites.run.left) {
-		player.currentSprite = player.sprites.run.left
-		player.currentCropWidth = player.sprites.run.cropWidth
-		player.width = player.sprites.run.width
-		} else if (!keys.left.pressed && 
-			lastKey === 'left' && player.currentSprite 
-		!= player.sprites.stand.left) {
-		player.currentSprite = player.sprites.stand.left
-		player.currentCropWidth = player.sprites.stand.cropWidth
-		player.width = player.sprites.stand.width
-		} else if (!keys.right.pressed && 
-			lastKey === 'right' && player.currentSprite 
-		!= player.sprites.stand.right) {
+		
+//sprite switching
+//sprite switching
+if (keys.right.pressed && keys.left.pressed) {
+	// Both keys pressed - show standing animation based on lastKey direction
+	// Reset frames to prevent animation cycling
+	if (lastKey === 'right' && player.currentSprite !== player.sprites.stand.right) {
+		player.frames = 0
 		player.currentSprite = player.sprites.stand.right
 		player.currentCropWidth = player.sprites.stand.cropWidth
 		player.width = player.sprites.stand.width
-		}
+	} else if (lastKey === 'left' && player.currentSprite !== player.sprites.stand.left) {
+		player.frames = 0
+		player.currentSprite = player.sprites.stand.left
+		player.currentCropWidth = player.sprites.stand.cropWidth
+		player.width = player.sprites.stand.width
+	}
+} else if (keys.right.pressed && 
+	player.currentSprite !== player.sprites.run.right) {
+		lastKey = 'right' // Update lastKey when actually moving right
+		player.frames = 1
+	player.currentSprite = player.sprites.run.right
+	player.currentCropWidth = player.sprites.run.cropWidth
+	player.width = player.sprites.run.width
+} else if (keys.left.pressed && 
+	player.currentSprite !== player.sprites.run.left) {
+	lastKey = 'left' // Update lastKey when actually moving left
+player.currentSprite = player.sprites.run.left
+player.currentCropWidth = player.sprites.run.cropWidth
+player.width = player.sprites.run.width
+} else if (!keys.left.pressed && !keys.right.pressed) {
+	// No keys pressed - show standing animation based on lastKey
+	if (lastKey === 'left' && player.currentSprite !== player.sprites.stand.left) {
+		player.currentSprite = player.sprites.stand.left
+		player.currentCropWidth = player.sprites.stand.cropWidth
+		player.width = player.sprites.stand.width
+	} else if (lastKey === 'right' && player.currentSprite !== player.sprites.stand.right) {
+		player.currentSprite = player.sprites.stand.right
+		player.currentCropWidth = player.sprites.stand.cropWidth
+		player.width = player.sprites.stand.width
+	}
+}
 
 
 		
@@ -671,7 +687,7 @@ addEventListener('keydown', ({keyCode}) => {
 		case 65: 
 		console.log('left')
 		keys.left.pressed = true
-		lastKey = 'left'
+		
 		break
 
 		case 83: 
@@ -681,7 +697,7 @@ addEventListener('keydown', ({keyCode}) => {
 		case 68: 
 		console.log('right')
 		keys.right.pressed = true
-		lastKey = 'right'
+		
 		break
 
 		case 87: 
