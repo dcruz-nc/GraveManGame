@@ -6,7 +6,7 @@ canvas.height = 600
 
 const gravity = .55;
 
-//player blueprint
+//david cruz
 //player blueprint
 class Player {
 	constructor() {
@@ -478,6 +478,7 @@ function animate() {
 	} else {
 		player.velocity.x = 0
 
+		
 		//environment move left and right if trying to pass boundry
 		//scrolloffset to check where on the map i am on
 	if (keys.right.pressed && scrollOffset < 9800) {
