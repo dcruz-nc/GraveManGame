@@ -688,22 +688,32 @@ addEventListener('keydown', ({keyCode}) => {
 		case 65: 
 		console.log('left')
 		keys.left.pressed = true
-		
+		// Add visual feedback for A key
+		const keyA = document.querySelector('#key-a')
+		if (keyA) keyA.classList.add('pressed')
 		break
 
 		case 83: 
 		console.log('down')
+		// Add visual feedback for S key
+		const keyS = document.querySelector('#key-s')
+		if (keyS) keyS.classList.add('pressed')
 		break
 		
 		case 68: 
 		console.log('right')
 		keys.right.pressed = true
-		
+		// Add visual feedback for D key
+		const keyD = document.querySelector('#key-d')
+		if (keyD) keyD.classList.add('pressed')
 		break
 
 		case 87: 
 	console.log('up')
-	player.jump()  
+	player.jump()
+	// Add visual feedback for W key
+	const keyW = document.querySelector('#key-w')
+	if (keyW) keyW.classList.add('pressed')
 	break
 	
 }
@@ -715,19 +725,31 @@ addEventListener('keyup', ({keyCode}) => {
 		case 65: 
 		console.log('left')
 		keys.left.pressed = false
+		// Remove visual feedback for A key
+		const keyA = document.querySelector('#key-a')
+		if (keyA) keyA.classList.remove('pressed')
 		break
 
 		case 83: 
 		console.log('down')
+		// Remove visual feedback for S key
+		const keyS = document.querySelector('#key-s')
+		if (keyS) keyS.classList.remove('pressed')
 		break
 		
 		case 68: 
 		console.log('right')
 		keys.right.pressed = false
+		// Remove visual feedback for D key
+		const keyD = document.querySelector('#key-d')
+		if (keyD) keyD.classList.remove('pressed')
 		break
 
 		case 87: 
 		console.log('up')
+		// Remove visual feedback for W key
+		const keyW = document.querySelector('#key-w')
+		if (keyW) keyW.classList.remove('pressed')
 		break
 	
 }
