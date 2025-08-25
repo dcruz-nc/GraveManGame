@@ -358,13 +358,30 @@ const keys = {
 
 let scrollOffset = 0
 
+let deathCount = 0
+let isFirstLoad = true
+
 function createImage(imageSrc) {
 	const image = new Image()
 	image.src = imageSrc
 	return image
 }
 
+function updateDeathCounter() {
+	const deathCounter = document.querySelector('#death-counter')
+	if (deathCounter) {
+		deathCounter.textContent = `Deaths: ${deathCount}`
+	}
+}
+
 function init() { //aka reset
+
+// Increment death counter (except on first load)
+if (!isFirstLoad) {
+	deathCount++
+	updateDeathCounter()
+}
+isFirstLoad = false
 
 //create objects in INIT!!!
  player = new Player()
@@ -680,6 +697,16 @@ player.width = player.sprites.run.width
 
 init()
 animate()
+
+// Ensure death counter is displayed after game starts
+setTimeout(() => {
+    updateDeathCounter()
+}, 100)
+
+// Initialize death counter display on page load
+document.addEventListener('DOMContentLoaded', () => {
+    updateDeathCounter()
+})
 
 //creation of when key is pressed down (down)
 //and then released (up)
