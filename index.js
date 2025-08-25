@@ -358,13 +358,30 @@ const keys = {
 
 let scrollOffset = 0
 
+let deathCount = 0
+let isFirstLoad = true
+
 function createImage(imageSrc) {
 	const image = new Image()
 	image.src = imageSrc
 	return image
 }
 
+function updateDeathCounter() {
+	const deathCounter = document.querySelector('#death-counter')
+	if (deathCounter) {
+		deathCounter.textContent = `Deaths: ${deathCount}`
+	}
+}
+
 function init() { //aka reset
+
+// Increment death counter (except on first load)
+if (!isFirstLoad) {
+	deathCount++
+	updateDeathCounter()
+}
+isFirstLoad = false
 
 //create objects in INIT!!!
  player = new Player()
@@ -681,6 +698,16 @@ player.width = player.sprites.run.width
 init()
 animate()
 
+// Ensure death counter is displayed after game starts
+setTimeout(() => {
+    updateDeathCounter()
+}, 100)
+
+// Initialize death counter display on page load
+document.addEventListener('DOMContentLoaded', () => {
+    updateDeathCounter()
+})
+
 //creation of when key is pressed down (down)
 //and then released (up)
 addEventListener('keydown', ({keyCode}) => {
@@ -688,22 +715,32 @@ addEventListener('keydown', ({keyCode}) => {
 		case 65: 
 		console.log('left')
 		keys.left.pressed = true
-		
+		// Add visual feedback for A key
+		const keyA = document.querySelector('#key-a')
+		if (keyA) keyA.classList.add('pressed')
 		break
 
 		case 83: 
 		console.log('down')
+		// Add visual feedback for S key
+		const keyS = document.querySelector('#key-s')
+		if (keyS) keyS.classList.add('pressed')
 		break
 		
 		case 68: 
 		console.log('right')
 		keys.right.pressed = true
-		
+		// Add visual feedback for D key
+		const keyD = document.querySelector('#key-d')
+		if (keyD) keyD.classList.add('pressed')
 		break
 
 		case 87: 
 	console.log('up')
-	player.jump()  
+	player.jump()
+	// Add visual feedback for W key
+	const keyW = document.querySelector('#key-w')
+	if (keyW) keyW.classList.add('pressed')
 	break
 	
 }
@@ -715,19 +752,31 @@ addEventListener('keyup', ({keyCode}) => {
 		case 65: 
 		console.log('left')
 		keys.left.pressed = false
+		// Remove visual feedback for A key
+		const keyA = document.querySelector('#key-a')
+		if (keyA) keyA.classList.remove('pressed')
 		break
 
 		case 83: 
 		console.log('down')
+		// Remove visual feedback for S key
+		const keyS = document.querySelector('#key-s')
+		if (keyS) keyS.classList.remove('pressed')
 		break
 		
 		case 68: 
 		console.log('right')
 		keys.right.pressed = false
+		// Remove visual feedback for D key
+		const keyD = document.querySelector('#key-d')
+		if (keyD) keyD.classList.remove('pressed')
 		break
 
 		case 87: 
 		console.log('up')
+		// Remove visual feedback for W key
+		const keyW = document.querySelector('#key-w')
+		if (keyW) keyW.classList.remove('pressed')
 		break
 	
 }
