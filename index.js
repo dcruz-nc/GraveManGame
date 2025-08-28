@@ -98,7 +98,7 @@ class AudioManager {
     updateMuteButton() {
         const muteButton = document.querySelector('#mute-button');
         if (muteButton) {
-            muteButton.textContent = this.isMuted ? '🔇' : '🔊';
+            muteButton.textContent = this.isMuted ? 'Unmute' : 'Mute';
             muteButton.title = this.isMuted ? 'Click to unmute' : 'Click to mute';
         }
     }
