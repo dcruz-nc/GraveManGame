@@ -6,6 +6,113 @@ canvas.height = 600
 
 const gravity = .55;
 
+// Audio Manager Class
+class AudioManager {
+    constructor() {
+        this.sounds = {};
+        this.musicVolume = 0.4; // Lower volume for background music
+        this.sfxVolume = 0.6;
+        this.isMuted = false;
+        this.audioUnlocked = false;
+    }
+    
+    loadSound(name, src, isMusic = false) {
+        const audio = new Audio(src);
+        audio.volume = isMusic ? this.musicVolume : this.sfxVolume;
+        if (isMusic) {
+            audio.loop = true;
+        }
+        // Preload the audio
+        audio.preload = 'auto';
+        this.sounds[name] = audio;
+        
+        // Handle loading errors
+        audio.addEventListener('error', (e) => {
+            console.log(`Failed to load audio: ${src}`, e);
+        });
+    }
+    
+    async play(name) {
+        if (this.isMuted) return;
+        
+        const sound = this.sounds[name];
+        if (sound) {
+            try {
+                sound.currentTime = 0;
+                await sound.play();
+            } catch (e) {
+                console.log(`Audio play failed for ${name}:`, e);
+            }
+        }
+    }
+    
+    async playMusic(name) {
+        if (this.isMuted) return;
+        
+        const music = this.sounds[name];
+        if (music) {
+            try {
+                await music.play();
+            } catch (e) {
+                console.log(`Music play failed for ${name}:`, e);
+            }
+        }
+    }
+    
+    stopAll() {
+        Object.values(this.sounds).forEach(audio => {
+            audio.pause();
+            audio.currentTime = 0;
+        });
+    }
+    
+    setMusicVolume(volume) {
+        this.musicVolume = Math.max(0, Math.min(1, volume));
+        Object.entries(this.sounds).forEach(([name, audio]) => {
+            if (name.includes('music') || name.includes('bg')) {
+                audio.volume = this.musicVolume;
+            }
+        });
+    }
+    
+    setSfxVolume(volume) {
+        this.sfxVolume = Math.max(0, Math.min(1, volume));
+        Object.entries(this.sounds).forEach(([name, audio]) => {
+            if (!name.includes('music') && !name.includes('bg')) {
+                audio.volume = this.sfxVolume;
+            }
+        });
+    }
+    
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.isMuted) {
+            this.stopAll();
+        } else if (this.audioUnlocked) {
+            this.playMusic('bgMusic');
+        }
+    }
+    
+    async unlockAudio() {
+        if (!this.audioUnlocked) {
+            try {
+                // Try to play background music to unlock audio context
+                await this.playMusic('bgMusic');
+                this.audioUnlocked = true;
+                console.log('Audio unlocked successfully');
+            } catch (e) {
+                console.log('Audio unlock failed:', e);
+            }
+        }
+    }
+}
+
+// Initialize Audio Manager
+const audioManager = new AudioManager();
+
+// Load background music
+audioManager.loadSound('bgMusic', 'audio/darkambientmusic.mp3', true);
+
 //david cruz
 //player blueprint
 class Player {
@@ -360,6 +467,7 @@ let scrollOffset = 0
 
 let deathCount = 0
 let isFirstLoad = true
+let gameStarted = false
 
 function createImage(imageSrc) {
 	const image = new Image()
@@ -708,9 +816,25 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDeathCounter()
 })
 
+// Audio unlock function - call this on first user interaction
+async function startGameAudio() {
+    if (!gameStarted) {
+        await audioManager.unlockAudio();
+        gameStarted = true;
+    }
+}
+
+// Add click listener to canvas to start audio
+canvas.addEventListener('click', startGameAudio, { once: true });
+
 //creation of when key is pressed down (down)
 //and then released (up)
-addEventListener('keydown', ({keyCode}) => {
+addEventListener('keydown', async ({keyCode}) => {
+    // Start audio on first keypress
+    if (!gameStarted) {
+        await startGameAudio();
+    }
+
 	switch (keyCode) {
 		case 65: 
 		console.log('left')
@@ -742,6 +866,12 @@ addEventListener('keydown', ({keyCode}) => {
 	const keyW = document.querySelector('#key-w')
 	if (keyW) keyW.classList.add('pressed')
 	break
+
+    // Add mute toggle with M key
+    case 77:
+        audioManager.toggleMute();
+        console.log('Audio muted:', audioManager.isMuted);
+        break
 	
 }
 	console.log(keys.right.pressed)
