@@ -14,6 +14,7 @@ class AudioManager {
         this.sfxVolume = 0.6;
         this.isMuted = false;
         this.audioUnlocked = false;
+        this.autoPlay = true; // Audio plays by default
     }
     
     loadSound(name, src, isMusic = false) {
@@ -91,6 +92,15 @@ class AudioManager {
         } else if (this.audioUnlocked) {
             this.playMusic('bgMusic');
         }
+        this.updateMuteButton();
+    }
+    
+    updateMuteButton() {
+        const muteButton = document.querySelector('#mute-button');
+        if (muteButton) {
+            muteButton.textContent = this.isMuted ? '🔇' : '🔊';
+            muteButton.title = this.isMuted ? 'Click to unmute' : 'Click to mute';
+        }
     }
     
     async unlockAudio() {
@@ -100,6 +110,11 @@ class AudioManager {
                 await this.playMusic('bgMusic');
                 this.audioUnlocked = true;
                 console.log('Audio unlocked successfully');
+                
+                // If autoPlay is enabled and not muted, start playing music
+                if (this.autoPlay && !this.isMuted) {
+                    this.playMusic('bgMusic');
+                }
             } catch (e) {
                 console.log('Audio unlock failed:', e);
             }
@@ -814,6 +829,18 @@ setTimeout(() => {
 // Initialize death counter display on page load
 document.addEventListener('DOMContentLoaded', () => {
     updateDeathCounter()
+    
+    // Initialize mute button
+    const muteButton = document.querySelector('#mute-button');
+    if (muteButton) {
+        // Set initial button state
+        audioManager.updateMuteButton();
+        
+        // Add click event listener
+        muteButton.addEventListener('click', () => {
+            audioManager.toggleMute();
+        });
+    }
 })
 
 // Audio unlock function - call this on first user interaction
@@ -821,6 +848,11 @@ async function startGameAudio() {
     if (!gameStarted) {
         await audioManager.unlockAudio();
         gameStarted = true;
+        
+        // If autoPlay is enabled and not muted, start playing music
+        if (audioManager.autoPlay && !audioManager.isMuted) {
+            audioManager.playMusic('bgMusic');
+        }
     }
 }
 
